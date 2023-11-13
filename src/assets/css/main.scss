@@ -1,0 +1,14 @@
+@use './elementplus.scss';
+// 全局路由切换效果
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0.5;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active,
+.fade-enter-active {
+  transition: all 0.5s ease-out;
+}

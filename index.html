@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/%VITE_CONFIG%"></script>
+    <style>
+      html,
+      body,
+      #app {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        width: 100vw !important;
+        overflow: hidden;
+        position: relative;
+      }
+      .page__loader__container {
+        background-color: #002251;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .page__loader__dom {
+        display: block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #fff;
+        animation: spin 2s linear infinite;
+        z-index: 1001;
+      }
+      .page__loader__dom:before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #fff;
+        animation: spin 3s linear infinite;
+      }
+
+      .page__loader__dom:after {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #fff;
+        animation: spin 1.5s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <title></title>
+    <script>
+      document.title = globalConfig.title
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="page__loader__container">
+        <div class="page__loader__dom"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "arrowParens": "always",
+  "_arrowParens": "箭头函数单个参数的情况是否省略括号",
+  "bracketSameLine": true,
+  "_bracketSameLine": "尖括号是否另起一行",
+  "bracketSpacing": true,
+  "embeddedLanguageFormatting": "auto",
+  "htmlWhitespaceSensitivity": "css",
+  "insertPragma": false,
+  "jsxSingleQuote": false,
+  "printWidth": 140,
+  "proseWrap": "never",
+  "quoteProps": "as-needed",
+  "requirePragma": false,
+  "semi": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "useTabs": false,
+  "vueIndentScriptAndStyle": false,
+  "singleAttributePerLine": false
+}

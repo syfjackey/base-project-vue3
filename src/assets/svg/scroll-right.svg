@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>箭头-右</title>
+    <g id="风险四单管理" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="切图" transform="translate(-306.000000, -30.000000)" fill="currentColor">
+            <path d="M306,30 L312,36 L306,42 L306,30 Z M312,30 L318,36 L312,42 L312,30 Z" id="箭头-右"></path>
+        </g>
+    </g>
+</svg>

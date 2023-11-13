@@ -1,0 +1,5 @@
+.el-button:focus:not(:hover) {
+  color: var(--el-button-text-color);
+  background-color: var(--el-button-bg-color);
+  border-color: var(--el-button-border-color);
+}

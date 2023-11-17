@@ -40,9 +40,9 @@ export interface YTableParams {
 /* 分页响应 */
 export interface YTablePageResponse<T> {
   total: number // 总条数
-  pageNum: number // 当前页码
-  pageSize: number // 每页条数
-  pages: number // 总页数
+  pageNum?: number // 当前页码
+  pageSize?: number // 每页条数
+  pages?: number // 总页数
   list: T[]
 }
 // 表格数据基础结构
@@ -54,6 +54,14 @@ export type YTableColumn = YTableFieldProps
 /* 数据响应 */
 export type YTableResDataType = YTableItem[] | YTablePageResponse<YTableItem>
 export type YTableDataType = (params: any) => Promise<YTableResDataType> | YTableResDataType
+
+export interface YTableIndexProps {
+  label: string
+  width: number | string
+  align?: 'left' | 'right' | 'center'
+  /* 序号按分页生成 还是 当前排 */
+  indexType?: 'page' | 'current'
+}
 /* YTable组件传参 */
 export interface YTableProps extends Partial<Omit<TableProps<YTableItem>, 'data'>> {
   /* 是否初始化字典 */
@@ -80,11 +88,5 @@ export interface YTableProps extends Partial<Omit<TableProps<YTableItem>, 'data'
   /* 是否立即执行 */
   immediate?: boolean
   /* 显示序号 */
-  indexConfig?: {
-    label: string
-    width: number | string
-    align?: 'left' | 'right' | 'center'
-    /* 序号按分页生成 还是 当前排 */
-    indexType?: 'page' | 'current'
-  }
+  indexConfig?: YTableIndexProps
 }

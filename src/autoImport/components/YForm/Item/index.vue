@@ -16,6 +16,7 @@ import YFormTimeItem from '../TimeItem/index.vue'
 import YFormTimeRangeItem from '../TimeRangeItem/index.vue'
 import YFormDateRangeItem from '../DateRangeItem/index.vue'
 import YFormTreeSelectItem from '../TreeSelectItem/index.vue'
+import YFormTextItem from '../TextItem/index.vue'
 import type { YFormItemProps } from '../componet-type'
 defineOptions({ name: 'YFormItem' })
 interface ComponentProps {
@@ -65,6 +66,8 @@ const componetName = computed(() => {
     case 'datetimeRange':
     case 'monthRange':
       return YFormDateRangeItem
+    case 'text':
+      return YFormTextItem
     case 'slot':
       return YFormSlotItem
     default:

@@ -8,9 +8,30 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCascader: typeof import('element-plus/es')['ElCascader']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElInput: typeof import('element-plus/es')['ElInput']
+    ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
+    ElOption: typeof import('element-plus/es')['ElOption']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
+    ElRadio: typeof import('element-plus/es')['ElRadio']
+    ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSlider: typeof import('element-plus/es')['ElSlider']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTree: typeof import('element-plus/es')['ElTree']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     YBar: typeof import('./../src/autoImport/components/YBar/index.vue')['default']
@@ -36,6 +57,7 @@ declare module 'vue' {
     YFormSlotItem: typeof import('./../src/autoImport/components/YForm/SlotItem/index.vue')['default']
     YFormSwitchItem: typeof import('./../src/autoImport/components/YForm/SwitchItem/index.vue')['default']
     YFormTextareaItem: typeof import('./../src/autoImport/components/YForm/TextareaItem/index.vue')['default']
+    YFormTextItem: typeof import('./../src/autoImport/components/YForm/TextItem/index.vue')['default']
     YFormTimeItem: typeof import('./../src/autoImport/components/YForm/TimeItem/index.vue')['default']
     YFormTimeRangeItem: typeof import('./../src/autoImport/components/YForm/TimeRangeItem/index.vue')['default']
     YFormTreeSelectItem: typeof import('./../src/autoImport/components/YForm/TreeSelectItem/index.vue')['default']
@@ -47,5 +69,8 @@ declare module 'vue' {
     YTable: typeof import('./../src/autoImport/components/YTable/index.vue')['default']
     YTableColumnItem: typeof import('./../src/autoImport/components/YTable/ColumnItem/index.vue')['default']
     YTableToolBar: typeof import('./../src/autoImport/components/YTable/ToolBar/index.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

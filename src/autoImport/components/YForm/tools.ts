@@ -80,7 +80,7 @@ export function createFormRules(columns: YFormColumn[] = []): FormRules {
 }
 export function getDicts(columns: YFormColumn[] = []): string[] {
   // @ts-ignore 获取字典值
-  return columns.filter((column) => typeof column.dict === 'string').map((column) => column.dict)
+  return columns.filter((column) => column.dict && typeof column.dict === 'string').map((column) => column.dict)
 }
 /* 获取组件绑定表单与实际表单映射关系 */
 export function createFieldMap(columns: YFormColumn[] = []) {

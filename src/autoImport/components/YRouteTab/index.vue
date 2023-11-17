@@ -30,14 +30,14 @@ const { visible, position, openContextMenu, clickItem } = useContextMenu<string>
 const contextmenus = computed<YContextmenuNode[]>(() => {
   if (clickItem.value === tabStore.routeTabs[0].tabKey) {
     return [
-      { name: '关闭其他', eventKey: 'closeOther', onClick: () => tabStore.delRouteTab(clickItem.value, 'other') },
-      { name: '关闭右侧标签页', eventKey: 'closeRight', onClick: () => tabStore.delRouteTab(clickItem.value, 'right') }
+      { label: '关闭其他', eventType: 'closeOther', onClick: () => tabStore.delRouteTab(clickItem.value, 'other') },
+      { label: '关闭右侧标签页', eventType: 'closeRight', onClick: () => tabStore.delRouteTab(clickItem.value, 'right') }
     ]
   }
   return [
-    { name: '关闭', eventKey: 'closeSelf', onClick: () => tabStore.delRouteTab(clickItem.value) },
-    { name: '关闭其他', eventKey: 'closeOther', onClick: () => tabStore.delRouteTab(clickItem.value, 'other') },
-    { name: '关闭右侧标签页', eventKey: 'closeRight', onClick: () => tabStore.delRouteTab(clickItem.value, 'right') }
+    { label: '关闭', eventType: 'closeSelf', onClick: () => tabStore.delRouteTab(clickItem.value) },
+    { label: '关闭其他', eventType: 'closeOther', onClick: () => tabStore.delRouteTab(clickItem.value, 'other') },
+    { label: '关闭右侧标签页', eventType: 'closeRight', onClick: () => tabStore.delRouteTab(clickItem.value, 'right') }
   ]
 })
 </script>

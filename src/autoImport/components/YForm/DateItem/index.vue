@@ -8,7 +8,7 @@ interface ComponentProps {
   type?: 'date' | 'year' | 'month' | 'dates' | 'week' | 'datetime'
 }
 
-const modelValue = defineModel<string>({ required: true, default: '' })
+const modelValue = defineModel<string | [string, string]>({ required: true, default: '' })
 const props = withDefaults(defineProps<ComponentProps>(), { type: 'date', props: () => ({}), event: () => ({}) })
 
 const valueFormat = computed(() => {

@@ -21,10 +21,7 @@ export default [
       'vue',
       'vue-router',
       {
-        '@vueuse/core': [
-          // 'useAsyncState' // import { useAsyncState } from '@vueuse/core',
-          'useTitle'
-        ]
+        '@vueuse/core': ['asyncComputed', 'useTitle']
       }
     ],
     /* 声明文件位置 */

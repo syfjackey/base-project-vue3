@@ -38,6 +38,7 @@ const slots = defineSlots<{
   toolEnd: () => any
   // @ts-ignore
   btns: (props: { search: () => Promise<any>; reset: () => void | undefined; expand: () => void }) => any
+  btnEnd: () => any
   [key: `${string}Header`]: (props: { list: any[]; column: any; index: number }) => any
   [key: string]: (props: { list: any[]; row: any; column: any; index: number }) => any
 }>()
@@ -80,6 +81,9 @@ const tableRef = ref<InstanceType<typeof YTable>>()
         <template #btns="events">
           <slot name="btns" v-bind="events"></slot>
         </template>
+        <template #btnEnd>
+          <slot name="btnEnd"></slot>
+        </template>
       </YSearch>
     </div>
     <div class="ypagetable__container__main">
@@ -91,6 +95,7 @@ const tableRef = ref<InstanceType<typeof YTable>>()
         @toolClick="toolEmit"
         :selection="props.tableConfig?.selection"
         :columns="tableColumns"
+        :index-config="props.tableConfig?.indexConfig"
         :isInitDict="false"
         :params="params"
         :gap="props.gap">
@@ -117,12 +122,12 @@ const tableRef = ref<InstanceType<typeof YTable>>()
   --ypagetable-gap: v-bind(gap);
   gap: var(--ypagetable-gap);
   &__search {
-    @apply flex-none bg-white;
+    @apply flex-none;
     border-radius: 4px;
     padding: 0 calc(var(--ypagetable-gap) * 2);
   }
   &__main {
-    @apply flex-fit-h bg-white;
+    @apply flex-fit-h;
     border-radius: 4px;
   }
   &__dialog {

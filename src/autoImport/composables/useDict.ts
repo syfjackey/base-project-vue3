@@ -24,6 +24,7 @@ async function initDict(dictTypes: string[] = [], cache: boolean = true) {
  * @returns
  */
 function getLocalDict(dictType: string) {
+  if (!dictType) return []
   return GlobalDict.get(dictType) || []
 }
 /**
@@ -33,6 +34,7 @@ function getLocalDict(dictType: string) {
  * @returns
  */
 async function getDict(dictType: string, cache = true) {
+  if (!dictType) return []
   if (GlobalDict.has(dictType)) {
     return GlobalDict.get(dictType)!
   } else {
@@ -103,6 +105,7 @@ function setRemote(
  * @returns
  */
 async function getDictByYFormDict(dict?: string | DictItem[] | ((dictType?: string) => Promise<DictItem[]>)): Promise<DictItem[]> {
+  if (!dict) return []
   if (typeof dict === 'string') {
     return getDict(dict)
   } else if (Array.isArray(dict)) {

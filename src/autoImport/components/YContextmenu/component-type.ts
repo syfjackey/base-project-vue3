@@ -1,8 +1,8 @@
 /* Item类型 */
 export interface YContextmenuItem {
   type?: 'item'
-  name: string
-  eventKey: string
+  label: string
+  eventType?: string // 事件类型
   icon?: string // unocss css icon图标 例如 i-
   shortcut?: string
   disabled?: boolean

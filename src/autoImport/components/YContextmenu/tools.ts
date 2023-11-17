@@ -11,6 +11,8 @@ export function useContextMenu<T>() {
   const position = ref<Point>({ x: 0, y: 0 })
   const clickItem = ref<T>()
   const openContextMenu = (event: MouseEvent, data?: T) => {
+    event.preventDefault()
+
     visible.value = true
     clickItem.value = data
     position.value = {

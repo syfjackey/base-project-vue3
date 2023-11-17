@@ -3,7 +3,8 @@ import type { ElTable } from 'element-plus'
 import { defaultProps, filterProps, getDicts, getPageItems, useWatchChange } from './tools'
 import type { YTableItem, YTableProps } from './component-type'
 defineOptions({ name: 'YTable' })
-
+/* 接收分页位置Dom */
+const pageTeleport = inject<Ref<HTMLDivElement>>('pageTeleport')
 const props = withDefaults(defineProps<YTableProps>(), defaultProps)
 const emit = defineEmits<{ toolClick: [type: string] }>()
 const indexMethod = (index: number) => {
@@ -111,9 +112,11 @@ defineExpose({
         </YTableColumnItem>
       </el-table>
     </div>
-    <div class="ytable__container__pagination" v-if="showPagination">
-      <el-pagination v-model:page-size="pSize" :page-sizes="pageSizes" v-model:current-page="pNum" :total="total" :layout="layout" />
-    </div>
+    <Teleport :to="pageTeleport" :disabled="!pageTeleport">
+      <div class="ytable__container__pagination" v-if="showPagination">
+        <el-pagination v-model:page-size="pSize" :page-sizes="pageSizes" v-model:current-page="pNum" :total="total" :layout="layout" />
+      </div>
+    </Teleport>
   </div>
 </template>
 <style lang="scss" scoped>

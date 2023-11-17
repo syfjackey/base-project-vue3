@@ -2,6 +2,7 @@
 import type { YContextmenuProps, YContextmenuNode, YContextmenuItem, Point } from './component-type'
 
 defineOptions({ inheritAttrs: false, name: 'YContextmenu' })
+const emit = defineEmits<{ click: [type: string] }>()
 /* 写成递归组件比较好,不过就一级也就无所谓了 */
 const visible = defineModel<boolean>({ default: false })
 const props = withDefaults(defineProps<YContextmenuProps>(), { items: () => [] })
@@ -24,6 +25,7 @@ const hasChildren = (item: YContextmenuItem) => {
 const onClick = (item: YContextmenuItem, event: PointerEvent) => {
   event.preventDefault()
   event.stopPropagation()
+  item.eventType && emit('click', item.eventType)
   item.onClick?.()
 }
 </script>
@@ -35,7 +37,7 @@ const onClick = (item: YContextmenuItem, event: PointerEvent) => {
         <context-menu-group
           v-if="hasChildren(item)"
           :preserveIconWidth="hasIcon(items)"
-          :label="item.name"
+          :label="item.label"
           :icon="item.icon"
           :shortcut="item.shortcut"
           :disabled="item.disabled">
@@ -44,7 +46,7 @@ const onClick = (item: YContextmenuItem, event: PointerEvent) => {
             <context-menu-item
               v-else
               :preserveIconWidth="hasIcon(item.children)"
-              :label="subItem.name"
+              :label="subItem.label"
               :icon="subItem.icon"
               :shortcut="subItem.shortcut"
               :onClick="(event: PointerEvent) => onClick(subItem, event)"
@@ -54,7 +56,7 @@ const onClick = (item: YContextmenuItem, event: PointerEvent) => {
         <context-menu-item
           v-else
           :preserveIconWidth="hasIcon(items)"
-          :label="item.name"
+          :label="item.label"
           :icon="item.icon"
           :shortcut="item.shortcut"
           @click="item.onClick?.()"

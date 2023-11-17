@@ -1,6 +1,6 @@
 import type { YButtonGroupItem } from '../YButtonGroup/component-type'
 import type { FormLayout, YFormColumn } from '../YForm/componet-type'
-import type { YTableColumn, YTableDataType } from '../YTable/component-type'
+import type { YTableColumn, YTableDataType, YTableIndexProps } from '../YTable/component-type'
 export interface YPageTableProps {
   /* 样式 */
   gap?: string
@@ -9,8 +9,12 @@ export interface YPageTableProps {
   tableConfig?: {
     /* 是否显示复选框 */
     selection?: boolean
+    /* 附加工具条 */
     tools?: YButtonGroupItem[]
+    /* 工具条追加方式 */
     toolMergeMode?: 'cover' | 'append'
+    /* 序号配置 */
+    indexConfig?: YTableIndexProps
   }
   /* 表单配置 */
   formColumns?: YFormColumn[]

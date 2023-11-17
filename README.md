@@ -71,6 +71,32 @@ npm run build     //打包
 | stats.html                    | 性能分析文件                         |
 | env.d.ts                      | 全局环境变量类型定义                 |
 
+#### 内置组件说明 (src/autoImport/components)
+| 组件         | 说明                                          |
+| :----------- | :-------------------------------------------- |
+| YBar         | 工具条容器,支持横向和竖向                     |
+| YButton      | 基于elButton二次封装,支持权限,popover,confirm |
+| YButtonGroup | 服务于YTable的按钮工具组                      |
+| YContainer   | 页面容器 支持上下左右中插槽                   |
+| YContextmenu | 右键弹窗组件                                  |
+| YDictLabel   | 字典名组件                                    |
+| YForm        | 配置型表单组件                                |
+| YHelp        | 表单项提示组件                                |
+| YIcon        | 图标组件                                      |
+| YPageTable   | 基于YSearch与YTable封装的组件                 |
+| YRouteTab    | 路由页签组件                                  |
+| YSearch      | 基于YForm开发的搜索组件                       |
+| YTable       | 分页组件                                      |
+
+#### 内置组合函数说明 (src/autoImport/composables)
+| 函数      | 说明         |
+| :-------- | :----------- |
+| useAuth   | 权限验证函数 |
+| useData   | 数据监听函数 |
+| useDialog | 弹窗绑定函数 |
+| useDict   | 获取字典函数 |
+| useForm   | 表单验证函数 |
+
 
 ### 别名支持  
 可通过修改 ***vite.config.ts*** 和 ***tsconfig.app.json*** 进行增减
@@ -86,6 +112,7 @@ npm run build     //打包
 - 支持`src/autoImport/components`下组件自动导入,组件名为对应目录+文件名,当文件名为***index***时可省略文件名,例如 /YBar/index.vue 使用方式为 `<YBar />` 
 - 支持自定义指令(`src/autoImport/directives`)自动导入,以文件名进行注册使用
 - 支持公共代码库(`src/autoImport/composables`)自动导入
+- 默认导入VueUse中`asyncComputed`和`useTitle`
 
 #### 字典配置
 1. `/src/dict/index.ts` 配置内置字典
@@ -124,7 +151,16 @@ const submit = async ()=>{
 }
 ``` 
 #### 数据组合函数 useData
-#### 异步数据组合函数 useAsyncData
+> 主要用于监听某个值来更新某个数据,如果需要异步获取,请使用asyncComputed
+```ts
+const defaultData = {}
+const {data,watchKey,reset} =useData(defaultData)
+const visible=ref(false)
+watchKey(visible,()=>newData)
+const newD = {}
+watchKey(newD)
+
+```
 
 #### 弹窗组合函数 useDialog
 > 具体见文件 `/src/autoImport/composables/useDialog.ts`
@@ -208,6 +244,10 @@ function doSome(){
 }
 ```
 
+### 配置统一认证
+1. 配置`public/config/mode.config.js`基本信息
+2. 修改`src/api/oauth.ts`中处理逻辑
+
 ### 全局通信
 
 ```ts
@@ -266,3 +306,19 @@ eventBus.emit(type)
 
 >**问**:新增了个svg图标,通过i-custom:xxx方式调用无法显示
 >**答**:svg自动导入不是热更新,需要重新启动服务
+
+>**问**:如何更新基础库/插件
+>**答**:使用`git fetch`和`git checkout`方式进行更新.
+```ts
+ // 添加远端仓库
+ git remote add baseVue  git@github.com:syfjackey/base-project-vue3.git
+ // 拉取仓库
+ git fetch baseVue
+ // 合并指定目录 ( -f 强制合并 )
+ git checkout -f baseVue/main src/autoImport
+ git checkout -f baseVue/main plugins
+ git checkout -f baseVue/main uno.config.ts
+```
+>**问**: 内置组件如何使用
+>**答**: 查看`@/views/demo`目录,或查看对应ts提示
+

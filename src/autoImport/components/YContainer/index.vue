@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import type { YContainerProps } from './component-type'
 defineOptions({ inheritAttrs: false, name: 'YContainer' })
-const props = withDefaults(defineProps<YContainerProps>(), { gap: '8px' })
+const props = withDefaults(defineProps<YContainerProps>(), {
+  gap: '8px',
+  hideBottom: false,
+  hideLeft: false,
+  hideRight: false,
+  hideTop: false
+})
 const { gap } = toRefs(props)
 const slots = useSlots()
 const { top, left, right, bottom } = globalConfig?.hideContainer || {}
 const query = basicTools.getQuery()
-const hideTop = !slots.top || query.hideTop || top || false
-const hideLeft = !slots.left || query.hideLeft || left || false
-const hideRight = !slots.right || query.hideRight || right || false
-const hideBottom = !slots.bottom || query.hideBottom || bottom || false
+
+const hideTop = computed(() => !slots.top || query.hideTop || top || props.hideTop)
+const hideLeft = computed(() => !slots.left || query.hideLeft || left || props.hideLeft)
+const hideRight = computed(() => !slots.right || query.hideRight || right || props.hideRight)
+const hideBottom = computed(() => !slots.bottom || query.hideBottom || bottom || props.hideBottom)
 </script>
 <template>
   <div class="ycontainer__container">

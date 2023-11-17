@@ -1,9 +1,12 @@
 import type { FormProps } from 'element-plus'
 /* -------------------------- YForm 基础表单组件 -------------------------- */
 export interface FormLayout {
+  /* 行内 或 grid 布局 */
   type?: 'inline' | 'grid'
+  /* 间隔 */
   gap?: number | string
-  col?: number
+  /* 几列 仅grid生效 */
+  cols?: number
 }
 /* 支持的表单项类型 */
 export type YFormItemType =
@@ -48,14 +51,18 @@ export type YFormItemType =
   | 'slider'
   /* 插槽 */
   | 'slot'
+  /* 普通文本 */
+  | 'text'
   /* 上传 */
   | 'upload'
 export type YFormItemRuleTrigger = 'blur' | 'change'
 
 export interface YFormBasicItemProps {
+  /* 监听事件 */
   event?: {
     [key: string]: (...any: any[]) => void
   }
+  /* 宽度 */
   width?: string | number
 }
 export interface YFormBasicFieldProps {
@@ -310,9 +317,10 @@ export interface YFormCheckboxItemProps extends YFormBasicItemProps, YFormDictTy
   }
 }
 /* 日期类型 */
-export interface YFormDateItemProps extends YFormBasicItemProps {
+export interface YFormDateItemProps extends YFormBasicItemProps, YFormValueType {
   type: 'date' | 'year' | 'month' | 'dates' | 'week' | 'datetime'
-  defaultValue?: number | string
+  defaultValue?: number | string | string[]
+
   props?: {
     size?: 'large' | 'default' | 'small'
     disabled?: boolean
@@ -415,7 +423,10 @@ export interface YFormTreeSelectItemProps extends YFormBasicItemProps, YFormDict
     filterable?: boolean
   }
 }
-
+export interface YFormTextItemProps extends YFormBasicItemProps {
+  type: 'text'
+  defaultValue?: any
+}
 export type YFormItemProps =
   | YFormInputItemProps
   | YFormTextareaItemProps
@@ -435,6 +446,7 @@ export type YFormItemProps =
   | YFormTimeRangeProps
   | YFormDateRangeProps
   | YFormTreeSelectItemProps
+  | YFormTextItemProps
 
 export type YFormColumn = YFormItemProps & YFormBasicFieldProps
 
@@ -448,6 +460,4 @@ export interface YFormProps extends Partial<Omit<FormProps, 'inline' | 'rules' |
   hideFoldGroup?: boolean
   /* 布局 */
   layout?: FormLayout
-  /* 行内模式 字段间隔 */
-  inlineGap?: string
 }

@@ -14,7 +14,7 @@ NProgress.configure({
 const { enable, redirectUrl, callbackType } = globalConfig.oAuthConfig || { enable: false }
 
 function goLogin(path: string) {
-  const redirect = `?redirect=${encodeURIComponent(path)}`
+  const redirect = path === '/404' ? '' : `?redirect=${encodeURIComponent(path)}`
   if (enable) {
     sessionStorage.setItem('redirectPath', redirectUrl)
     const url = oAuthLoginIn()

@@ -3,13 +3,10 @@
   <div class="democomponent__container">
     <h1>YBar 工具条组件</h1>
     <p>支持上下/左右/上中下/左中右布局的flex类型的工具条</p>
-    <div class="code">
-      <pre>
-<code> &lt;YBar&gt;&lt;/YBar&gt; </code>      </pre>
-    </div>
     <h2>基础用法</h2>
     <div class="example">
       <YBar class="barclass"> 普通内容 </YBar>
+      <textarea class="code" disabled><YBar> 普通内容 </YBar></textarea>
     </div>
     <h2>左右结构</h2>
     <div class="example">
@@ -17,6 +14,12 @@
         <template #left><div class="left">左侧内容</div></template>
         <template #right><div class="right">右侧内容</div></template>
       </YBar>
+      <textarea class="code" disabled>
+      <YBar class="barclass">
+        <template #left><div class="left">左侧内容</div></template>
+        <template #right><div class="right">右侧内容</div></template>
+      </YBar>
+      </textarea>
     </div>
     <h2>左中右结构</h2>
     <div class="example">
@@ -25,6 +28,13 @@
         <div class="center">我是中间内容</div>
         <template #right><div class="right">右侧内容</div></template>
       </YBar>
+      <textarea class="code" disabled>
+      <YBar class="barclass">
+        <template #left><div class="left">左侧内容</div></template>
+        <div class="center">我是中间内容</div>
+        <template #right><div class="right">右侧内容</div></template>
+      </YBar>
+      </textarea>
     </div>
     <h2>上下结构</h2>
     <div class="example">
@@ -32,6 +42,12 @@
         <template #top><div class="left">上层内容</div></template>
         <template #bottom><div class="right">下层内容</div></template>
       </YBar>
+      <textarea class="code" disabled>
+      <YBar class="barclass" dir="column">
+        <template #top><div class="left">上层内容</div></template>
+        <template #bottom><div class="right">下层内容</div></template>
+      </YBar>
+      </textarea>
     </div>
     <h2>上中下结构</h2>
     <div class="example">
@@ -40,6 +56,13 @@
         <div class="center">我是中间内容</div>
         <template #bottom><div class="right">右侧内容</div></template>
       </YBar>
+      <textarea class="code" disabled>
+      <YBar class="barclass" dir="column">
+        <template #top><div class="left">左侧内容</div></template>
+        <div class="center">我是中间内容</div>
+        <template #bottom><div class="right">右侧内容</div></template>
+      </YBar>
+      </textarea>
     </div>
     <h2>属性</h2>
     <table class="table">
@@ -94,7 +117,6 @@
 <style lang="scss" scoped>
 .democomponent__container {
   @apply w-100% h-100%  bg-white box-border p-20px overflow-auto;
-  width: 800px;
   .example {
     border: 1px solid #dcdfe6;
     border-radius: 3px;
@@ -112,6 +134,7 @@
   .barclass {
     @apply lh-30px bg-#E5E9F2;
     border-radius: 3px;
+    margin-bottom: 10px;
   }
   .table {
     width: 100%;
@@ -130,6 +153,11 @@
     box-sizing: border-box;
     border-radius: 3px;
     padding: 10px;
+    resize: none;
+    width: 100%;
+  }
+  textarea.code {
+    height: 200px;
   }
 }
 </style>

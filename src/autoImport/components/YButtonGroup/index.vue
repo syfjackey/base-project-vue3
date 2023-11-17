@@ -3,21 +3,20 @@ import type { YButtonGroupItem, YButtonGroupProps } from './component-type'
 
 defineOptions({ inheritAttrs: false, name: 'YButtonGroup' })
 const emit = defineEmits<{ click: [type: string] }>()
-const props = withDefaults(defineProps<YButtonGroupProps>(), { items: () => [] })
+const props = withDefaults(defineProps<YButtonGroupProps>(), { items: () => [] as YButtonGroupItem[] })
 const { hasAuth } = useAuth()
 const filterItems = ref<YButtonGroupItem[]>([])
 const changeIcon = (icons: string[] = [], icon?: string) => {
   if (icons.length === 0) return icon
+  if (!icon) return icons[0]
   const index = icons.findIndex((ic) => ic === icon)
   if (index < 0) return icon
   return icons[index + 1] || icons[0]
 }
 const emitEvent = (item: YButtonGroupItem) => {
   item.icon = changeIcon(item.icons, item.icon)
-  if (!item.onClick) {
-    return emit('click', item.type)
-  }
-  return item.onClick()
+  emit('click', item.type)
+  return item.onClick?.()
 }
 
 watch(

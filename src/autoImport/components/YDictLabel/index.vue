@@ -5,7 +5,7 @@ defineOptions({ name: 'YDictLabel' })
 const props = withDefaults(defineProps<YDictLabelProps>(), { defaultLabel: '未知' })
 const { type, value, defaultLabel } = toRefs(props)
 const { getDictLabel } = useDict()
-const label = ref(defaultLabel)
+const label = ref(defaultLabel.value)
 const getLabel = async () => {
   label.value = await getDictLabel(type.value, value.value, defaultLabel.value)
 }

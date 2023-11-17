@@ -4,7 +4,7 @@ import type { YSearchProps } from './component-type'
 import { useExpand } from './tools'
 defineOptions({ name: 'YSearch' })
 
-const emit = defineEmits<{ search: [form: Record<string, any>] }>()
+const emit = defineEmits<{ search: [form: Record<string, any>]; reset: [] }>()
 const props = withDefaults(defineProps<YSearchProps>(), {
   layout: () => ({ type: 'inline' }),
   isInitDict: true,
@@ -23,7 +23,10 @@ const search = async () => {
   const form = yFormRef.value!.getForm()
   emit('search', form)
 }
-const reset = () => yFormRef.value?.resetForm()
+const reset = () => {
+  yFormRef.value?.resetForm()
+  emit('reset')
+}
 
 const { isExpandMode, expand, domRef, expandText, expandIcon } = useExpand(props.foldGroup)
 onMounted(() => {
@@ -48,12 +51,10 @@ defineExpose({
       <template #formGroup_0>
         <slot name="btns" :search="search" :reset="reset" :expand="expand">
           <div class="ysearch__container__btns">
-            <el-button type="primary" @click="search()">查询</el-button>
-            <el-button type="info" plain @click="reset()">重置</el-button>
-            <el-button v-if="isExpandMode" @click="expand()">
-              {{ expandText }}
-              <YIcon :icon="expandIcon" class="ml-6px"></YIcon>
-            </el-button>
+            <YButton type="primary" @click="search()" icon="i-custom:search">查询</YButton>
+            <YButton type="primary" @click="reset()" icon="i-custom:refresh">重置</YButton>
+            <YButton type="primary" v-if="isExpandMode" @click="expand()" :icon="expandIcon">{{ expandText }}</YButton>
+            <slot name="btnEnd"></slot>
           </div>
         </slot>
       </template>
@@ -68,7 +69,6 @@ defineExpose({
   @apply w-100%  overflow-hidden box-border flex-none;
   /* 为了上下对称 */
   --yform-field-margin-bottom: 18px;
-  background: #fff;
   border-radius: 4px;
   padding: var(--yform-field-margin-bottom) 0px 0;
   transition: height 0.5s;

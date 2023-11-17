@@ -22,8 +22,7 @@ const props = withDefaults(defineProps<YFormProps>(), {
   hideFoldGroup: false,
   isInitDict: true,
   foldGroup: () => [],
-  layout: () => ({ type: 'grid', col: 1, gap: 0 }),
-  inlineGap: '20px',
+  layout: () => ({ type: 'grid', cols: 1, gap: 0 }),
   showMessage: true
 })
 /* ElementTable 传参 */
@@ -37,7 +36,7 @@ const yFormGap = computed(() => {
 })
 /* 获取列 */
 const yFormCol = computed(() => {
-  const col = props.layout.col ?? 1
+  const col = props.layout.cols ?? 1
   return isInline.value ? 0 : col < 1 ? 1 : col
 })
 

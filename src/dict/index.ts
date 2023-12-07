@@ -1,8 +1,6 @@
 /* 默认字典值 */
-interface DictMap {
-  [key: string]: DictItem[]
-}
-const dicts: DictMap = {
+
+const dicts: Record<string, DictItem[]> = {
   sex: [
     {
       label: '男',

@@ -1,25 +1,21 @@
 <script setup lang="ts">
 import type { CascaderOption } from 'element-plus'
 import { getValueBy, reflexDicts } from '../tools'
-import type { YFormCascaderItemProps, YFormDictType } from '../componet-type'
+import type { ConvertProps, YFormCascaderItemProps, YFormDictType } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormCascaderItem' })
 interface ComponentProps extends YFormDictType {
-  props?: YFormCascaderItemProps['props']
+  props?: ConvertProps<YFormCascaderItemProps['props']>
   event?: YFormCascaderItemProps['event']
 }
 const modelValue = defineModel<any>({ required: true, default: '' })
 const props = withDefaults(defineProps<ComponentProps>(), { bindDictValue: 'value', props: () => ({}), event: () => ({}) })
 const { getDictByYFormDict } = useDict()
-const dictList = ref<CascaderOption[]>([])
-const initDicts = async () => {
-  dictList.value = (await getDictByYFormDict(props.dict)) as CascaderOption[]
-}
+const dictList = getDictByYFormDict<CascaderOption[]>(toRef(props.dict))
+
 const cascaderProps = computed(() => {
   return { emitPath: false, ...props.props?.props }
 })
-
-watch(() => props.dict, initDicts, { immediate: true })
 
 const field = computed<any>({
   set(val) {

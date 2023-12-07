@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import type { YFormDictType, YFormRadioItemProps } from '../componet-type'
+import type { ConvertProps, YFormDictType, YFormRadioItemProps } from '../componet-type'
 import { getValueBy, reflexDicts } from '../tools'
 
 defineOptions({ inheritAttrs: false, name: 'YFormRadioItem' })
 interface ComponentProps extends YFormDictType {
-  props?: YFormRadioItemProps['props']
+  props?: ConvertProps<YFormRadioItemProps['props']>
   event?: YFormRadioItemProps['event']
 }
 const modelValue = defineModel<DictValue | DictItem | undefined>({ required: true })
 const props = withDefaults(defineProps<ComponentProps>(), { bindDictValue: 'value', props: () => ({}), event: () => ({}) })
 const { getDictByYFormDict } = useDict()
-const dictList = ref<DictItem[]>([])
-const initDicts = async () => {
-  dictList.value = await getDictByYFormDict(props.dict)
-}
-watch(() => props.dict, initDicts, { immediate: true })
+const dictList = getDictByYFormDict<DictItem[]>(toRef(props.dict))
 
 const field = computed({
   set(val: string | number) {

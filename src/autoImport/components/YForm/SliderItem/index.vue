@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormSliderItemProps } from '../componet-type'
+import type { ConvertProps, YFormSliderItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormSliderItem' })
 interface ComponentProps {
-  props?: YFormSliderItemProps['props']
+  props?: ConvertProps<YFormSliderItemProps['props']>
   event?: YFormSliderItemProps['event']
 }
 

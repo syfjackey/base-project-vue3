@@ -298,6 +298,32 @@ function getTreeValueBy<T, K extends keyof T>(trees: T[] = [], field: K): T[K][]
   })
   return [...new Set(values)]
 }
+/**
+ * 根据路径检查对象是否存在该字段
+ * @param obj
+ * @param paths
+ * @returns
+ */
+function checkPath(obj: Record<string, any>, paths: string[]) {
+  if (paths.length === 0) return { check: false, value: undefined }
+  let checkObj = obj
+  for (let i = 0; i < paths.length; i++) {
+    const key = paths[i]
+    if (getType(checkObj) !== 'object') return { check: false, value: undefined }
+
+    const check = Object.hasOwn(checkObj, key)
+    if (check) {
+      if (i === paths.length - 1) {
+        return { check: true, value: checkObj[key] }
+      } else {
+        checkObj = checkObj[key]
+      }
+    } else {
+      return { check: false, value: undefined }
+    }
+  }
+  return { check: false, value: undefined }
+}
 export const basicTools = {
   getImg,
   splitArr,
@@ -315,5 +341,6 @@ export const basicTools = {
   getQuery,
   cloneDeep,
   getTreeValueBy,
-  filterTreeBy
+  filterTreeBy,
+  checkPath
 }

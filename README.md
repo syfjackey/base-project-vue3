@@ -116,7 +116,7 @@ npm run build     //打包
 
 #### 字典配置
 1. `/src/dict/index.ts` 配置内置字典
-2. `/src/api/common.ts` 配置远端字典以及映射关系
+2. `/src/api/dict.ts` 配置远端字典以及映射关系
 
 #### 字典类型 
 ```ts
@@ -133,12 +133,9 @@ type 远端字典类型 = RemoteDictItem
 > 具体见文件 `/src/autoImport/composables/useDict.ts`
 ```ts
 const { initDict,  getDict,  getDictLabel,  getLocalDict,  getLocalDictLabel,  getRefDict,} =useDict()
-initDict(['dictType'],true) // 初始化字典项并缓存
-getDict('dictType') // 异步获取字典项
-getDictLabel('dictType','value') // 异步获取字典名
-getLocalDict('dictType') // 获取本地字典
-getLocalDictLabel('dictType','value') // 获取本地字典名
-const dict = getRefDict('dictType') // 获取ref类型的字典项
+initDict(['dictType']) // 初始化字典项
+getDict('dictType') // 获取字典项 ref 类型
+getDictLabel('dictType','value') // 获取字典名  ref类型
 ```
 #### 表单组合函数 useForm
 > 具体见文件 `/src/autoImport/composables/useForm.ts`

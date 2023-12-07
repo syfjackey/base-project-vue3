@@ -1,8 +1,8 @@
 import dicts from '@/dict/index'
-
+import { type Ref } from 'vue'
+import type { YFormDictType } from '../components/YForm/componet-type'
 // 基础设置
-const GlobalDict = new Map<string, DictItem[]>()
-Object.entries(dicts).map(([key, value]) => GlobalDict.set(key, value))
+const GlobalDict = reactive<Record<string, DictItem[]>>(dicts)
 let GetRemoteDict: (dictType: string) => Promise<DictItem[]> = async (dictType: string) => {
   console.warn(`字典:${dictType} -- 查询失败`)
   return []
@@ -13,60 +13,63 @@ let GetRemoteDict: (dictType: string) => Promise<DictItem[]> = async (dictType: 
  * @param cache 是否缓存
  * @returns
  */
-async function initDict(dictTypes: string[] = [], cache: boolean = true) {
-  const promiseList = dictTypes.map((dictType) => getDict(dictType, cache))
+async function initDict(dictTypes: string[] = []) {
+  const promiseList = dictTypes.map((dictType) => requireDict(dictType))
   await Promise.allSettled(promiseList)
   return true
 }
-/**
- * getLocalDict 获取本地字典
- * @param dictType 字典类型
- * @returns
- */
-function getLocalDict(dictType: string) {
-  if (!dictType) return []
-  return GlobalDict.get(dictType) || []
+const requireDict = async (dictType: string) => {
+  if (GlobalDict[dictType]) return GlobalDict[dictType]
+  GlobalDict[dictType] = []
+  const list = await GetRemoteDict(dictType)
+
+  GlobalDict[dictType].push(...list)
+  return GlobalDict[dictType]
 }
 /**
- * getDict 异步获取字典
+ * getDict 获取字典
  * @param dictType 字典类型
  * @param cache 是否缓存
- * @returns
+ * @returns Ref<DictItem[]>
  */
-async function getDict(dictType: string, cache = true) {
-  if (!dictType) return []
-  if (GlobalDict.has(dictType)) {
-    return GlobalDict.get(dictType)!
-  } else {
-    const list = await GetRemoteDict(dictType)
-    if (cache) {
-      GlobalDict.set(dictType, list)
+function getDict(dictType: string | Ref<string>): Ref<DictItem[]> {
+  return computed(() => {
+    const type = isRef(dictType) ? dictType.value : dictType
+    if (!type) return []
+
+    if (!Array.isArray(GlobalDict[type])) {
+      GlobalDict[type] = []
+      console.log(type)
+      GetRemoteDict(type).then((list) => {
+        GlobalDict[type].push(...list)
+      })
     }
-    return list
-  }
+    return GlobalDict[type]
+  })
 }
+
 /**
- * getLocalDictLabel 获取本地字典名
+ * getDictLabel 获取字典名
  * @param dictType 字典类型
  * @param value  字典值
  * @param defaultLabel 默认名称
  * @returns
  */
-function getLocalDictLabel(dictType: string, value: DictValue, defaultLabel: DictValue = '未知') {
-  const list = GlobalDict.get(dictType) || []
-  const item = searchDictItem(list, value)
-  return item?.label || defaultLabel
-}
-/**
- * getDictLabel 异步获取字典名
- * @param dictType 字典类型
- * @param value  字典值
- * @param defaultLabel 默认名称
- * @returns
- */
-async function getDictLabel(dictType: string, value: DictValue, defaultLabel?: DictValue) {
-  await getDict(dictType)
-  return getLocalDictLabel(dictType, value, defaultLabel)
+function getDictLabel(dictType: string | Ref<string>, value?: DictValue | Ref<DictValue>, defaultLabel?: DictValue | Ref<DictValue>) {
+  return computed(() => {
+    const type = isRef(dictType) ? dictType.value : dictType
+    const val = isRef(value) ? value.value : value
+    const defaultVal = isRef(defaultLabel) ? defaultLabel.value : defaultLabel
+
+    if (!type) return defaultVal
+    if (typeof val !== 'string' && typeof val !== 'number') return defaultVal
+
+    // console.log(3333, type, val)
+    const dicts = getDict(type).value
+    const dict = dicts.find((item) => item.value === val)
+
+    return dict?.label || defaultVal
+  })
 }
 
 /**
@@ -76,27 +79,25 @@ async function getDictLabel(dictType: string, value: DictValue, defaultLabel?: D
  * @param remoteFn 远程获取字典函数
  * @param options 匹配规则
  */
-
+interface DictOptionMap {
+  label: string
+  value: string
+}
+interface RemoteData {
+  options: DictOptionMap
+  dicts: RemoteDictItem[]
+}
+function setRemote(remoteFn: (dictType: string) => Promise<RemoteData> | RemoteData): void
 function setRemote(remoteFn: (dictType: string) => Promise<DictItem[]> | DictItem[]): void
-function setRemote(
-  remoteFn: (dictType: string) => Promise<RemoteDictItem[]> | RemoteDictItem[],
-  options: {
-    label: string
-    value: string
-  }
-): void
-function setRemote(
-  remoteFn: (dictType: string) => Promise<any[]> | any[],
-  options?: {
-    label: string
-    value: string
-  }
-) {
+function setRemote(remoteFn: (dictType: string) => Promise<RemoteDictItem[]> | RemoteDictItem[], options: DictOptionMap): void
+function setRemote(remoteFn: (dictType: string) => Promise<any[]> | any[] | RemoteData | Promise<RemoteData>, options?: DictOptionMap) {
   const ops = { label: 'label', value: 'value', ...options }
-
   GetRemoteDict = async (dictType: string) => {
     const list = await remoteFn(dictType)
-    return coverRemoteItem(list, ops)
+    if (Array.isArray(list)) {
+      return coverRemoteItem(list, ops)
+    }
+    return coverRemoteItem(list.dicts, list.options)
   }
 }
 /**
@@ -104,27 +105,31 @@ function setRemote(
  * @param dict
  * @returns
  */
-async function getDictByYFormDict(dict?: string | DictItem[] | ((dictType?: string) => Promise<DictItem[]>)): Promise<DictItem[]> {
-  if (!dict) return []
-  if (typeof dict === 'string') {
-    return getDict(dict)
-  } else if (Array.isArray(dict)) {
-    return dict
-  } else if (typeof dict === 'function') {
-    return dict()
-  }
-  return []
+type YFormDict = YFormDictType['dict']
+function getDictByYFormDict<T>(
+  dict?: string | Ref<string> | YFormDict | Ref<YFormDict> | (() => Promise<DictItem[]> | DictItem[]) | Readonly<Ref<Promise<DictItem[]>>>
+): Ref<T> {
+  return asyncComputed(async () => {
+    const rDict = isRef(dict) ? dict.value : dict
+    if (!rDict) return []
+    if (Array.isArray(rDict)) {
+      return rDict
+    } else if (typeof rDict === 'function') {
+      return await rDict()
+    } else if (typeof rDict === 'string') {
+      return getDict(rDict).value
+    } else {
+      return await rDict
+    }
+  }, []) as Ref<T>
 }
 
 /**
  * 字典工具
  *
  * @returns initDict 初始化字典项
- * @returns getLocalDict 获取本地字典
- * @returns getLocalDictLabel 获取本地字典名
- * @returns getDict 异步获取字典
- * @returns getDictLabel 异步获取字典名
- * @returns getRefDict 字典Ref
+ * @returns getDict 获取字典 Ref类型
+ * @returns getDictLabel 获取字典名 Ref类型
  * @returns setRemote 配置远端主机
  * @returns getDictByYFormDict 用于YForm组件的工具
  */
@@ -132,26 +137,10 @@ export const useDict = () => ({
   initDict,
   getDict,
   getDictLabel,
-  getLocalDict,
-  getLocalDictLabel,
-  getRefDict,
   setRemote,
-  getDictByYFormDict
+  getDictByYFormDict,
+  coverRemoteItem
 })
-
-/**
- * getRefDict 获取字典
- * @description 获取Ref类型的字典列表
- *
- * @param dictType 字典Key
- * @returns Ref<DictItem[]>
- */
-
-function getRefDict(dictType: string) {
-  const dict = shallowRef<DictItem[]>([])
-  getDict(dictType).then((list) => (dict.value = list))
-  return dict
-}
 
 /**
  * 根据值查找字典树
@@ -181,13 +170,7 @@ function findDictItem(item: DictItem, value: DictValue): DictItem | undefined {
  * 远端字典转换为本地字典
  */
 
-function coverRemoteItem(
-  remoteItems: RemoteDictItem[],
-  options: {
-    label: string
-    value: string
-  }
-): DictItem[] {
+function coverRemoteItem(remoteItems: RemoteDictItem[], options: DictOptionMap): DictItem[] {
   const result: DictItem[] = []
   remoteItems.forEach((remoteItem) => {
     let children: DictItem[] = []

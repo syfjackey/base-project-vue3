@@ -46,6 +46,7 @@ const watchAndReloadList = useWatchChange(props.immediate, getList)
 watchAndReloadList(pNum)
 watchAndReloadList(pSize, 1)
 watchAndReloadList(() => props.params, 1)
+watchAndReloadList(() => props.data, 1)
 /* 初始化字典值 */
 const { initDict } = useDict()
 onBeforeMount(async () => {
@@ -69,7 +70,15 @@ const slots = defineSlots<{
   toolBefore: () => any
   toolEnd: () => any
   [key: `${string}Header`]: (props: { list: any[]; column: any; index: number }) => any
-  [key: string]: (props: { list: any[]; getList: (page?: number) => Promise<void>; row: any; column: any; index: number }) => any
+  [key: string]: (props: {
+    list: any[]
+    getList: (page?: number) => Promise<void>
+    row: any
+    column: any
+    index: number
+    pageSize: number
+    pageNum: number
+  }) => any
 }>()
 const slotNames = Object.keys(slots).filter((key) => !['tool', 'toolBefore', 'toolEnd'].includes(key))
 
@@ -105,9 +114,17 @@ defineExpose({
         :row-key="props.rowKey">
         <el-table-column type="selection" width="55" v-if="props.selection" :reserve-selection="!!props.rowKey" />
         <el-table-column type="index" :index="indexMethod" v-if="props.indexConfig" v-bind="props.indexConfig" />
-        <YTableColumnItem v-for="(fieldColumn, i) in filterColumns" :key="i" :column="fieldColumn">
+        <YTableColumnItem v-for="(fieldColumn, i) in filterColumns" :key="i" :column="fieldColumn" :page-size="pSize" :page-num="pNum">
           <template #[slotName]="{ row, column, index }" v-for="slotName in slotNames">
-            <slot :name="slotName" :list="tableItems" :getList="getList" :row="row" :column="column" :index="index"></slot>
+            <slot
+              :pageSize="pSize"
+              :pageNum="pNum"
+              :name="slotName"
+              :list="tableItems"
+              :getList="getList"
+              :row="row"
+              :column="column"
+              :index="index"></slot>
           </template>
         </YTableColumnItem>
       </el-table>

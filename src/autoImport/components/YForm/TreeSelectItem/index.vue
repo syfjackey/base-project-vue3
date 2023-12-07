@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import type { YFormDictType, YFormTreeSelectItemProps } from '../componet-type'
+import type { ConvertProps, YFormDictType, YFormTreeSelectItemProps } from '../componet-type'
 import { getValueBy, reflexDicts } from '../tools'
 
 defineOptions({ inheritAttrs: false, name: 'YFormTreeSelectItem' })
 interface ComponentProps extends YFormDictType {
-  props?: YFormTreeSelectItemProps['props']
+  props?: ConvertProps<YFormTreeSelectItemProps['props']>
   event?: YFormTreeSelectItemProps['event']
 }
 const modelValue = defineModel<any>({ required: true })
 const props = withDefaults(defineProps<ComponentProps>(), { bindDictValue: 'value', props: () => ({}), event: () => ({}) })
 const { getDictByYFormDict } = useDict()
-const dictList = ref<DictItem[]>([])
-const initDicts = async () => {
-  dictList.value = await getDictByYFormDict(props.dict)
-}
-watch(() => props.dict, initDicts, { immediate: true })
+const dictList = getDictByYFormDict<DictItem[]>(toRef(props.dict))
 const field = computed({
   set(val: any) {
     const list = reflexDicts(dictList.value, val, 'value')

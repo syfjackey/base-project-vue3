@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormTimeRangeProps } from '../componet-type'
+import type { ConvertProps, YFormTimeRangeProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormTimeRangeItem' })
 interface ComponentProps {
-  props?: YFormTimeRangeProps['props']
+  props?: ConvertProps<YFormTimeRangeProps['props']>
   event?: YFormTimeRangeProps['event']
 }
 

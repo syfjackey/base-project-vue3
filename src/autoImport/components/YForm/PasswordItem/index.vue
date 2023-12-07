@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormPasswordItemProps } from '../componet-type'
+import type { ConvertProps, YFormPasswordItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormPasswordItem' })
 interface ComponentProps {
-  props?: YFormPasswordItemProps['props']
+  props?: ConvertProps<YFormPasswordItemProps['props']>
   event?: YFormPasswordItemProps['event']
 }
 

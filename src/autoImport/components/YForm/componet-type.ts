@@ -1,4 +1,10 @@
 import type { FormProps } from 'element-plus'
+import { type Ref } from 'vue'
+/* 公共方法 */
+type CheckRefType<T> = T extends Ref<infer U> ? U : T
+export type ConvertProps<T> = {
+  [P in keyof T]: CheckRefType<T[P]>
+}
 /* -------------------------- YForm 基础表单组件 -------------------------- */
 export interface FormLayout {
   /* 行内 或 grid 布局 */
@@ -65,6 +71,20 @@ export interface YFormBasicItemProps {
   /* 宽度 */
   width?: string | number
 }
+export interface YFormBasicRule {
+  type?: 'date' | 'array' | 'number' | 'string' | 'object' | 'url'
+  validator?: (
+    rule: YFormBasicRule,
+    value: any,
+    callback: (error?: any) => void,
+    source: any,
+    options: any,
+    form: Record<string, any>
+  ) => void
+  message: string
+  trigger?: YFormItemRuleTrigger | YFormItemRuleTrigger[]
+  required?: boolean
+}
 export interface YFormBasicFieldProps {
   /* 绑定字段 */
   field: string
@@ -75,18 +95,14 @@ export interface YFormBasicFieldProps {
   /* 显示隐藏 */
   show?: boolean | ((form?: any) => boolean)
   /* elForm 规则 */
-  rules?: {
-    type?: 'date' | 'array' | 'number' | 'string' | 'object' | 'url'
-    validator?: (...any: any[]) => void
-    message: string
-    trigger?: YFormItemRuleTrigger | YFormItemRuleTrigger[]
-    required?: boolean
-  }
+  rules?: YFormBasicRule | YFormBasicRule[]
+  /* 当为grid布局时,占据几列 */
+  span?: number
 }
 
 export interface YFormDictType {
   /* 字典类型 */
-  dict: string | DictItem[] | (() => Promise<DictItem[]>)
+  dict: string | DictItem[] | (() => Promise<DictItem[]>) | Ref<string>
   /* 绑定类型 */
   bindDictValue?: 'item' | 'label' | 'value'
 }
@@ -107,7 +123,7 @@ export interface YFormInputItemProps extends YFormBasicItemProps {
     showWordLimit?: boolean
     placeholder?: string
     clearable?: boolean
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     size?: 'large' | 'default' | 'small'
     /* 前缀图标 */
     prefixIcon?: string
@@ -127,7 +143,7 @@ export interface YFormTextareaItemProps extends YFormBasicItemProps {
     maxlength?: string | number
     showWordLimit?: boolean
     placeholder?: string
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     size?: 'large' | 'default' | 'small'
     readonly?: boolean
     rows?: number
@@ -146,7 +162,7 @@ export interface YFormPasswordItemProps extends YFormBasicItemProps {
     maxlength?: string | number
     placeholder?: string
     clearable?: boolean
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     size?: 'large' | 'default' | 'small'
     /* 前缀图标 */
     prefixIcon?: string
@@ -163,7 +179,7 @@ export interface YFormSelectItemProps extends YFormBasicItemProps, YFormDictType
   /* 支持传参 */
   props?: {
     multiple?: boolean
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     size?: 'large' | 'default' | 'small'
     clearable?: boolean
     collapseTags?: boolean
@@ -196,7 +212,7 @@ export interface YFormCascaderItemProps extends YFormBasicItemProps, YFormDictTy
   props?: {
     size?: 'large' | 'default' | 'small'
     placeholder?: string
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     clearable?: boolean
     showAllLevels?: boolean
     filterable?: boolean
@@ -217,7 +233,7 @@ export interface YFormRadioItemProps extends YFormBasicItemProps, YFormDictType 
   defaultValue?: string | number | boolean
   props?: {
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
   }
 }
 /* 开关类型 */
@@ -226,7 +242,7 @@ export interface YFormSwitchItemProps extends YFormBasicItemProps {
   defaultValue?: string | number | boolean
   props?: {
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     inlinePrompt?: boolean
     activeText?: string
     inactiveText?: string
@@ -239,13 +255,14 @@ export interface YFormNumberItemProps extends YFormBasicItemProps {
   type: 'number'
   defaultValue?: number
   props?: {
+    align?: 'center' | 'left' | 'right'
     min?: number
     max?: number
     step?: number
     stepStrictly?: boolean
     precision?: number
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     controls?: boolean
     controlsPosition?: '' | 'right'
     placeholder?: string
@@ -264,7 +281,7 @@ export interface YFormNumberRangeItemProps extends YFormBasicItemProps, YFormVal
     stepStrictly?: boolean
     precision?: number
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     controls?: boolean
     controlsPosition?: '' | 'right'
     placeholder?: string
@@ -282,7 +299,7 @@ export interface YFormSliderItemProps extends YFormBasicItemProps {
   props?: {
     min?: number
     max?: number
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     step?: number
     showInput?: boolean
     showInputControls?: boolean
@@ -300,6 +317,7 @@ export interface YFormSlotItemProps extends YFormBasicItemProps {
   type: 'slot'
   event?: never
   defaultValue?: any
+  props?: Record<string, any>
 }
 /* 复选框类型 */
 export interface YFormCheckboxItemProps extends YFormBasicItemProps, YFormDictType, YFormValueType {
@@ -307,7 +325,7 @@ export interface YFormCheckboxItemProps extends YFormBasicItemProps, YFormDictTy
   defaultValue?: string[] | number[]
   /* 支持传参 */
   props?: {
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     min?: number
     max?: number
     textColor?: string
@@ -323,7 +341,7 @@ export interface YFormDateItemProps extends YFormBasicItemProps, YFormValueType 
 
   props?: {
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     readonly?: boolean
     editable?: boolean
     clearable?: boolean
@@ -340,7 +358,7 @@ export interface YFormTimeItemProps extends YFormBasicItemProps {
   type: 'time'
   defaultValue?: number | string
   props?: {
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     readonly?: boolean
     editable?: boolean
     clearable?: boolean
@@ -360,7 +378,7 @@ export interface YFormTimeRangeProps extends YFormBasicItemProps, YFormValueType
   defaultValue?: [string, string] | string
   fieldMap?: [string, string]
   props?: {
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     readonly?: boolean
     editable?: boolean
     clearable?: boolean
@@ -383,7 +401,7 @@ export interface YFormDateRangeProps extends YFormBasicItemProps, YFormValueType
   fieldMap?: [string, string]
   props?: {
     size?: 'large' | 'default' | 'small'
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     readonly?: boolean
     editable?: boolean
     clearable?: boolean
@@ -413,7 +431,7 @@ export interface YFormTreeSelectItemProps extends YFormBasicItemProps, YFormDict
     accordion?: boolean
     /* elSelect */
     multiple?: boolean
-    disabled?: boolean
+    disabled?: boolean | Ref<boolean>
     size?: 'large' | 'default' | 'small'
     clearable?: boolean
     collapseTags?: boolean
@@ -426,6 +444,7 @@ export interface YFormTreeSelectItemProps extends YFormBasicItemProps, YFormDict
 export interface YFormTextItemProps extends YFormBasicItemProps {
   type: 'text'
   defaultValue?: any
+  props?: Record<string, any>
 }
 export type YFormItemProps =
   | YFormInputItemProps
@@ -460,4 +479,6 @@ export interface YFormProps extends Partial<Omit<FormProps, 'inline' | 'rules' |
   hideFoldGroup?: boolean
   /* 布局 */
   layout?: FormLayout
+  /* 表单数据同步 */
+  form?: Record<string, any>
 }

@@ -123,11 +123,23 @@ const slotName = computed(() => {
   }
   return
 })
+
+const bindProps = computed(() => {
+  const pObj = props.item.props as Record<string, any>
+  if (!pObj) return pObj
+  return Object.keys(pObj)?.reduce(
+    (obj, key: string) => {
+      obj[key] = isRef(pObj[key]) ? unref(pObj[key]) : pObj[key]
+      return obj
+    },
+    {} as Record<string, any>
+  )
+})
 </script>
 <template>
   <div class="yform-item__container">
     <slot :name="slotName">
-      <component :is="componetName" v-bind="item" v-model="modelValue"></component>
+      <component :is="componetName" v-bind="item" :props="bindProps" v-model="modelValue"></component>
     </slot>
   </div>
 </template>

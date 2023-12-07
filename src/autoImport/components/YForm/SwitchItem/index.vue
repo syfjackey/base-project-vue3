@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormSwitchItemProps } from '../componet-type'
+import type { ConvertProps, YFormSwitchItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormSwitchItem' })
 interface ComponentProps {
-  props?: YFormSwitchItemProps['props']
+  props?: ConvertProps<YFormSwitchItemProps['props']>
   event?: YFormSwitchItemProps['event']
 }
 const modelValue = defineModel<string | number | boolean>({})

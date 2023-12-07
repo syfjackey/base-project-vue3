@@ -2,10 +2,10 @@
 import type { YButtonProps } from './component-type'
 defineOptions({ inheritAttrs: false, name: 'YButton' })
 const props = defineProps<YButtonProps>()
+const emit = defineEmits<{ click: [] }>()
 const attrs = useAttrs()
 const slots = useSlots()
 const { hasAuth } = useAuth()
-const onClick = attrs.onClick as () => void
 const btnProps = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { icon, confirm, tip, auth, ...bProps } = props
@@ -24,11 +24,11 @@ const trigger = computed(() => {
 const visible = ref(false)
 const popClick = () => {
   visible.value = false
-  onClick?.()
+  emit('click')
 }
 const btnClick = () => {
   if (props.confirm) return
-  onClick?.()
+  emit('click')
 }
 </script>
 <template>
@@ -42,8 +42,15 @@ const btnClick = () => {
     <template #reference>
       <el-button v-bind="btnProps" @click="btnClick()">
         <template #icon v-if="props.icon"> <YIcon :icon="props.icon"></YIcon> </template>
-        <slot></slot>
+        <slot v-if="slots.default"></slot>
       </el-button>
     </template>
   </el-popover>
 </template>
+<style lang="scss">
+.el-button {
+  [class*='el-icon'] + span:empty {
+    display: none;
+  }
+}
+</style>

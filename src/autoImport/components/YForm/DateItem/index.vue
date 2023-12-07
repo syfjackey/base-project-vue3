@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormDateItemProps } from '../componet-type'
+import type { ConvertProps, YFormDateItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormDateItem' })
 interface ComponentProps {
-  props?: YFormDateItemProps['props']
+  props?: ConvertProps<YFormDateItemProps['props']>
   event?: YFormDateItemProps['event']
   type?: 'date' | 'year' | 'month' | 'dates' | 'week' | 'datetime'
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormTextareaItemProps } from '../componet-type'
+import type { ConvertProps, YFormTextareaItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormTextareaItem' })
 interface ComponentProps {
-  props?: YFormTextareaItemProps['props']
+  props?: ConvertProps<YFormTextareaItemProps['props']>
   event?: YFormTextareaItemProps['event']
 }
 

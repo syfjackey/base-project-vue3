@@ -5,8 +5,10 @@ import { useLoginStore } from '@/stores/useLoginStore'
  */
 export function useAuth() {
   const { auths } = useLoginStore()
-  const hasAuth = (auth?: string) => {
-    return !auth || auths.includes(auth)
+  const hasAuth = (auth?: string | string[]) => {
+    if (!auth) return true
+    const checks = Array.isArray(auth) ? auth : [auth]
+    return basicTools.hasIntersection(auths, checks)
   }
   return { hasAuth }
 }

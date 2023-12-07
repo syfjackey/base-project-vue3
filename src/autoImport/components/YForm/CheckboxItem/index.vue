@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { YFormCheckboxItemProps, YFormDictType } from '../componet-type'
+import type { ConvertProps, YFormCheckboxItemProps, YFormDictType } from '../componet-type'
 import { getValueBy, reflexDicts } from '../tools'
 
 defineOptions({ inheritAttrs: false, name: 'YFormCheckboxItem' })
 interface ComponentProps extends YFormDictType {
-  props?: YFormCheckboxItemProps['props']
+  props?: ConvertProps<YFormCheckboxItemProps['props']>
   event?: YFormCheckboxItemProps['event']
 }
 const modelValue = defineModel<DictValue[] | DictItem[]>({ required: true, default: [] })
@@ -15,11 +15,7 @@ const props = withDefaults(defineProps<ComponentProps>(), {
 })
 
 const { getDictByYFormDict } = useDict()
-const dictList = ref<DictItem[]>([])
-const initDicts = async () => {
-  dictList.value = await getDictByYFormDict(props.dict)
-}
-watch(() => props.dict, initDicts, { immediate: true })
+const dictList = getDictByYFormDict<DictItem[]>(toRef(props.dict))
 
 const field = computed({
   set(val: string[] | number[]) {

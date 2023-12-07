@@ -35,6 +35,12 @@
         <td>string</td>
         <td>#999</td>
       </tr>
+      <tr>
+        <td>hoverColor</td>
+        <td>滑过颜色</td>
+        <td>string</td>
+        <td>#999</td>
+      </tr>
     </table>
   </div>
 </template>

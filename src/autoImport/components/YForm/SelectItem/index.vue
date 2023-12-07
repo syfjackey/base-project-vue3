@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import type { YFormDictType, YFormSelectItemProps } from '../componet-type'
+import type { ConvertProps, YFormDictType, YFormSelectItemProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormSelectItem' })
 interface ComponentProps extends YFormDictType {
-  props?: YFormSelectItemProps['props']
+  props?: ConvertProps<YFormSelectItemProps['props']>
   event?: YFormSelectItemProps['event']
 }
 const modelValue = defineModel<any>({ required: true })
 const props = withDefaults(defineProps<ComponentProps>(), { bindDictValue: 'value', props: () => ({}), event: () => ({}) })
 const { getDictByYFormDict } = useDict()
-const dictList = ref<DictItem[]>([])
-const initDicts = async () => {
-  dictList.value = await getDictByYFormDict(props.dict)
-}
-watch(() => props.dict, initDicts, { immediate: true })
+const dictList = getDictByYFormDict<DictItem[]>(toRef(props.dict))
+
 const getValue = (item: DictItem) => {
   return props.bindDictValue === 'item' ? item : item[props.bindDictValue]
 }

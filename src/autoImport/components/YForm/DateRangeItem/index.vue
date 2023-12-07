@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { YFormDateRangeProps } from '../componet-type'
+import type { ConvertProps, YFormDateRangeProps } from '../componet-type'
 
 defineOptions({ inheritAttrs: false, name: 'YFormDateRangeItem' })
 interface ComponentProps {
-  props?: YFormDateRangeProps['props']
+  props?: ConvertProps<YFormDateRangeProps['props']>
   event?: YFormDateRangeProps['event']
   type?: 'monthRange' | 'dateRange' | 'datetimeRange'
 }
@@ -42,6 +42,7 @@ const dateType = computed(() => props.type.toLowerCase() as 'monthrange' | 'date
     end-placeholder="结束日期"
     :default-time="[new Date('2000-01-01 00:00:00'), new Date('2000-01-01 23:59:59')]"
     :type="dateType"
+    v-bind="props.props"
     v-on="props.event"></el-date-picker>
 </template>
 <style scoped lang="scss"></style>

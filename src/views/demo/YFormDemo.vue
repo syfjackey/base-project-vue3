@@ -250,6 +250,12 @@ const foldGroup: string[][] = [['input', 'textarea']]
         <td>FormLayout</td>
         <td></td>
       </tr>
+      <tr>
+        <td>form</td>
+        <td>赋值表单,根据转换之后形成的对象赋值</td>
+        <td></td>
+        <td></td>
+      </tr>
     </table>
     <h2>YFormColumn 表单类型</h2>
     <table class="table">
@@ -284,6 +290,12 @@ const foldGroup: string[][] = [['input', 'textarea']]
         <td></td>
       </tr>
       <tr>
+        <td>span</td>
+        <td>当布局为grid时,占据几列</td>
+        <td>number</td>
+        <td>1</td>
+      </tr>
+      <tr>
         <td>rules</td>
         <td>验证规则</td>
         <td>参考elForm规则</td>
@@ -292,8 +304,8 @@ const foldGroup: string[][] = [['input', 'textarea']]
       <tr>
         <td>event</td>
         <td>绑定事件</td>
-        <td>根据不同表单项绑定不同事件</td>
-        <td></td>
+        <td>根据不同表单项绑定不同事件,最后一个值为表单对象</td>
+        <td>最后一个参数为表单数据</td>
       </tr>
       <tr>
         <td>width</td>
@@ -317,21 +329,16 @@ const foldGroup: string[][] = [['input', 'textarea']]
         <td>props</td>
         <td>表单项传参</td>
         <td>根据不同表单项传不同参数</td>
-        <td></td>
+        <td>disabled 支持ref类型</td>
       </tr>
 
       <tr>
         <td>dict</td>
         <td>字典类型(仅部分表单类型可用)</td>
-        <td>string</td>
-        <td></td>
+        <td>string | DictItem[] | Ref&#60;string&#62;</td>
+        <td>当为Ref类型时,自动监听变化</td>
       </tr>
-      <tr>
-        <td>dict</td>
-        <td>字典类型(仅部分表单类型可用)</td>
-        <td>string</td>
-        <td></td>
-      </tr>
+
       <tr>
         <td>bindDictValue</td>
         <td>绑定值类型(对象,名称,值)</td>
@@ -395,6 +402,12 @@ const foldGroup: string[][] = [['input', 'textarea']]
       <tr>
         <td>updateForm</td>
         <td>更新表单,键值对更新,或者 对象部分更新</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>updateFormByRelation</td>
+        <td>根据转换后的真实表单进行赋值</td>
         <td></td>
         <td></td>
       </tr>

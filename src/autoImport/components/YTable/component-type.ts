@@ -11,7 +11,8 @@ export type YTablePageLayout = 'prev' | 'pager' | 'next' | 'jumper' | 'total' | 
 export interface YTableFieldProps {
   field: string
   label: string
-  formatter?: (row: any, column: any) => string
+  formatter?: (row: any, column: any, index: number, value: any, pageSize: number, pageNum: number) => string
+  defaultValue?: string
   type?: 'slot' | ''
   props?: {
     align?: 'left' | 'right' | 'center'
@@ -28,7 +29,7 @@ export interface YTableFieldProps {
   /* 字典 */
   dict?: string | DictItem[]
   /* 显隐列 */
-  show?: boolean
+  show?: boolean | (() => boolean)
   /* 多级表头 */
   children?: YTableFieldProps[]
 }

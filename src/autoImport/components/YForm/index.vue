@@ -46,24 +46,18 @@ provide('yform-inline', isInline)
 const modelValue = defineModel<Record<string, any>>()
 /* 默认值 */
 const defaultForm = createDefaultForm(props.columns)
+
 /* 组件表单与真正表单映射关系 */
 const fieldMap = createFieldMap(props.columns)
 /* 组件使用的表单 */
-const bindForm = ref<Record<string, any>>(JSON.parse(JSON.stringify(defaultForm)))
+const bindForm = ref<Record<string, any>>(basicTools.cloneDeep(defaultForm))
+
 // /* 真正表单 */
 const effectiveForm = computed(() => getEffectiveForm(bindForm.value, props.columns, fieldMap))
 /* 表单验证 */
 const { formRef, validateForm } = useForm()
 
-/* 同步modelValue */
-watch(effectiveForm, (val) => (modelValue.value = JSON.parse(JSON.stringify(val))), { immediate: true, deep: true })
-watch(modelValue, (val) => {
-  if (!val || JSON.stringify(val) === '{}') return
-  if (JSON.stringify(val) === JSON.stringify(effectiveForm.value)) return
-  updateFormByRelation(val)
-})
-
-const rules = createFormRules(props.columns)
+const rules = createFormRules(props.columns, bindForm.value)
 /* 初始化字典值 */
 const { initDict } = useDict()
 onBeforeMount(async () => {
@@ -79,11 +73,17 @@ const updateForm: UpdateForm = (data: string | Record<string, any>, value?: any)
 }
 /* 根据映射关系更新表单 */
 const updateFormByRelation = (map: Record<string, any>) => {
+  if (!map) return
   bindForm.value = updateFieldsByRelation(bindForm.value, map, fieldMap, props.columns)
 }
 /* 重置表单 */
 const resetForm = () => {
-  bindForm.value = JSON.parse(JSON.stringify(defaultForm))
+  const form = basicTools.cloneDeep(defaultForm)
+  if (!basicTools.isEmpty(props.form)) {
+    bindForm.value = updateFieldsByRelation(form, props.form!, fieldMap, props.columns)
+  } else {
+    bindForm.value = form
+  }
   formRef.value!.clearValidate()
 }
 /* 表单显隐 */
@@ -93,10 +93,31 @@ const isShow = (column: YFormColumn) => {
   }
   return column.show ? column.show(bindForm.value) : true
 }
+const coverEvent = (event?: Record<string, any>) => {
+  if (!event) return event
+  return Object.keys(event).reduce(
+    (obj, key) => {
+      obj[key] = (...args: any[]) => event[key](...args, bindForm.value)
+      return obj
+    },
+    {} as Record<string, any>
+  )
+}
 /* 表单分组 */
+const updateNum = ref(0)
 const columnGroup = computed<YFormColumn[][]>(() => {
-  if (!props.foldGroup || !Array.isArray(props.foldGroup) || props.foldGroup.length === 0) return [props.columns]
-  const columns = [...props.columns]
+  if (updateNum.value > -1) {
+    // 只为重新更新表格
+  }
+  const propColumns = props.columns.map((column) => {
+    const event = coverEvent(column.event)
+    return {
+      ...column,
+      event
+    } as YFormColumn
+  })
+  if (!props.foldGroup || !Array.isArray(props.foldGroup) || props.foldGroup.length === 0) return [propColumns]
+  const columns = [...propColumns]
   const groups: YFormColumn[][] = []
   props.foldGroup.forEach((fields) => {
     const newlist: YFormColumn[] = []
@@ -113,12 +134,39 @@ const columnGroup = computed<YFormColumn[][]>(() => {
 })
 
 /* 获取列类型表单样式 */
-const getColClass = (i: number) => {
+const getColClass = (i: number, columns?: YFormColumn[]) => {
   if (isInline.value) return 'yform__container__field__inline'
-  return (i + 1) % yFormCol.value === 0 ? 'yform__container__field yform__container__field__nomr ' : 'yform__container__field'
+  let num = 0
+  if (columns) {
+    for (let index = 0; index <= i; index++) {
+      num = (columns[index].span || 1) + num
+    }
+  } else {
+    num = i + 1
+  }
+  return num % yFormCol.value === 0 ? 'yform__container__field yform__container__field__nomr ' : 'yform__container__field'
 }
+/* 更新配置 */
+const refresh = () => (updateNum.value = updateNum.value++)
+/* 同步modelValue */
+watch(effectiveForm, (val) => (modelValue.value = JSON.parse(JSON.stringify(val))), { immediate: true, deep: true })
+watch(modelValue, (val) => {
+  if (!val || JSON.stringify(val) === '{}') return
+  if (JSON.stringify(val) === JSON.stringify(effectiveForm.value)) return
+  updateFormByRelation(val)
+})
+/* 表单赋值 */
+watch(
+  () => props.form,
+  (formObj: Record<string, any>) => {
+    if (basicTools.isEmpty(formObj)) return
+    updateFormByRelation(formObj)
+  },
+  {
+    immediate: true
+  }
+)
 /* 定义插槽类型 */
-
 defineSlots<{
   formStart: () => any
   formEnd: () => any
@@ -131,6 +179,7 @@ defineExpose({
   validateForm,
   updateForm,
   resetForm,
+  refresh,
   getForm: () => JSON.parse(JSON.stringify(effectiveForm.value)) as Record<string, any>
 })
 </script>
@@ -144,7 +193,11 @@ defineExpose({
           isInline ? '' : 'yform__container__grid',
           props.hideFoldGroup && i !== 0 ? 'yform__container__group__none' : ''
         ]">
-        <div :class="getColClass(i)" v-for="(column, i) in columns" :key="column.field">
+        <div
+          :class="getColClass(index, columns)"
+          v-for="(column, index) in columns"
+          :key="column.field"
+          :style="{ '--grid-field-span': column.span || 1 }">
           <YFormField v-model="bindForm[column.field]" :item="column" v-show="isShow(column)">
             <template #[column.field]="{ data }" v-if="column.type === 'slot'">
               <slot :name="column.field" :data="data"></slot>
@@ -176,7 +229,10 @@ defineExpose({
     margin-bottom: var(--field-margin-bottom);
   }
   &__field {
-    width: calc((100% - (var(--yform-col) - 1) * var(--yform-gap)) / var(--yform-col));
+    width: calc(
+      (100% - (var(--yform-col) - 1) * var(--yform-gap)) / var(--yform-col) * var(--grid-field-span) + (var(--grid-field-span) - 1) *
+        var(--yform-gap)
+    );
     margin-right: var(--yform-gap);
     color: var(--el-text-color-regular);
     font-size: 14px;

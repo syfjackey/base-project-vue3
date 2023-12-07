@@ -72,9 +72,23 @@ export function getEffectiveForm(form: Record<string, any>, columns: YFormColumn
   })
   return newForm
 }
-export function createFormRules(columns: YFormColumn[] = []): FormRules {
+export function createFormRules(columns: YFormColumn[] = [], form: Record<string, any>): FormRules {
   return columns.reduce((ruleObj, column) => {
-    ruleObj[column.field] = column.rules
+    if (column.rules) {
+      const rules = Array.isArray(column.rules) ? column.rules : [column.rules]
+      //@ts-ignore
+      ruleObj[column.field] = rules.map((rule) => {
+        if (rule.validator) {
+          return {
+            ...rule,
+            //@ts-ignore
+            validator: (...args: any[]) => rule.validator!(...args, form) as any
+          }
+        }
+        return rule
+      })
+    }
+
     return ruleObj
   }, {} as FormRules)
 }
@@ -200,24 +214,7 @@ export function updateFields(form: Record<string, any>, fieldMap: FieldMap, data
   return newForm
 }
 export function checkObjectPath(obj: Record<string, any>, paths: string[]) {
-  if (paths.length === 0) return { check: false, value: undefined }
-  let checkObj = obj
-  for (let i = 0; i < paths.length; i++) {
-    const key = paths[i]
-    if (basicTools.getType(checkObj) !== 'object') return { check: false, value: undefined }
-
-    const check = Object.hasOwn(checkObj, key)
-    if (check) {
-      if (i === paths.length - 1) {
-        return { check: true, value: checkObj[key] }
-      } else {
-        checkObj = checkObj[key]
-      }
-    } else {
-      return { check: false, value: undefined }
-    }
-  }
-  return { check: false, value: undefined }
+  return basicTools.checkPath(obj, paths)
 }
 /* 获取form传参 */
 
